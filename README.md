@@ -220,9 +220,7 @@ The animation system was optimized by:
 
 ---
 
-# Screenshots
 
-(Add screenshots here later)
 
 ---
 
