@@ -1,0 +1,196 @@
+"use client";
+
+import { useState } from "react";
+
+export default function Home() {
+
+  const [topic, setTopic] = useState("");
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const startDebate = async () => {
+
+    if (!topic) return;
+
+    setLoading(true);
+    setResult(null);
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/debate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            topic: topic
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      setResult(data);
+
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Backend not running");
+    }
+
+    setLoading(false);
+  };
+
+  return (
+
+    <main style={styles.container}>
+
+      <h1 style={styles.title}>
+        AI Debate Engine
+      </h1>
+
+      <div style={styles.inputRow}>
+
+        <input
+          style={styles.input}
+          type="text"
+          placeholder="Enter debate topic..."
+          value={topic}
+          onChange={(e) =>
+            setTopic(e.target.value)
+          }
+        />
+
+        <button
+          style={styles.button}
+          onClick={startDebate}
+        >
+          Start Debate
+        </button>
+
+      </div>
+
+      {loading && (
+
+        <p style={styles.loading}>
+          AI agents are debating...
+        </p>
+
+      )}
+
+      {result && (
+
+        <div style={styles.results}>
+
+          {result.rounds.map(
+            (round) => (
+
+              <div
+                key={round.round}
+                style={styles.card}
+              >
+
+                <h2>
+                  Round {round.round}
+                </h2>
+
+                <h3>
+                  Pro
+                </h3>
+
+                <p>
+                  {round.pro}
+                </p>
+
+                <h3>
+                  Opp
+                </h3>
+
+                <p>
+                  {round.opp}
+                </p>
+
+              </div>
+
+            )
+          )}
+
+          <div style={styles.winnerCard}>
+
+            <h2>
+              Winner Decision
+            </h2>
+
+            <p>
+              {result.winner_decision}
+            </p>
+
+          </div>
+
+        </div>
+
+      )}
+
+    </main>
+
+  );
+}
+
+const styles = {
+
+  container: {
+    padding: "40px",
+    fontFamily: "Arial",
+    maxWidth: "900px",
+    margin: "auto",
+  },
+
+  title: {
+    fontSize: "32px",
+    marginBottom: "20px",
+  },
+
+  inputRow: {
+    display: "flex",
+    gap: "10px",
+    marginBottom: "20px",
+  },
+
+  input: {
+    flex: 1,
+    padding: "10px",
+    fontSize: "16px",
+  },
+
+  button: {
+    padding: "10px 16px",
+    fontSize: "16px",
+    cursor: "pointer",
+  },
+
+  loading: {
+    fontSize: "18px",
+    color: "blue",
+  },
+
+  results: {
+    marginTop: "20px",
+  },
+
+  card: {
+    padding: "20px",
+    marginBottom: "20px",
+    border: "1px solid #ccc",
+    borderRadius: "10px",
+    background: "#f9f9f9",
+  },
+
+  winnerCard: {
+    padding: "20px",
+    border: "2px solid black",
+    borderRadius: "10px",
+    background: "#e8f5e9",
+  },
+
+};
+node_modules
